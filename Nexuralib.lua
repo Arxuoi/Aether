@@ -1019,23 +1019,41 @@ function Nexuralib:CreateWindow(config)
 
     -- ==================== DRAGGABLE ====================
     if draggable then
-    local dragDetector = Instance.new("UIGragDetector")
-    dragDetector.Parent = Header
-    dragDetector.DragStyle = Enum.UIGragDetectorDragStyle.Standard
+    local dragging = false
+    local dragStartX, dragStartY, startPosX, startPosY
     
-    dragDetector.DragMoveCallback = function(obj, delta)
-        local newX = Container.Position.X.Offset + delta.X
-        local newY = Container.Position.Y.Offset + delta.Y
-        
-        -- Batasi agar tidak keluar layar
-        local screenSize = GetScreenSize()
-        local maxX = screenSize.X - Container.AbsoluteSize.X
-        local maxY = screenSize.Y - Container.AbsoluteSize.Y
-        newX = math.clamp(newX, 0, maxX)
-        newY = math.clamp(newY, 0, maxY)
-        
-        Container.Position = UDim2.new(0, newX, 0, newY)
-    end
+    Header.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStartX = input.Position.X
+            dragStartY = input.Position.Y
+            startPosX = Container.Position.X.Offset
+            startPosY = Container.Position.Y.Offset
+        end
+    end)
+    
+    Header.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
+    
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local deltaX = input.Position.X - dragStartX
+            local deltaY = input.Position.Y - dragStartY
+            local newX = startPosX + deltaX
+            local newY = startPosY + deltaY
+            
+            local screenSize = GetScreenSize()
+            local maxX = screenSize.X - Container.AbsoluteSize.X
+            local maxY = screenSize.Y - Container.AbsoluteSize.Y
+            newX = math.clamp(newX, 0, maxX)
+            newY = math.clamp(newY, 0, maxY)
+            
+            Container.Position = UDim2.new(0, newX, 0, newY)
+        end
+    end)
     end
     
     -- ==================== TAB SYSTEM ====================
