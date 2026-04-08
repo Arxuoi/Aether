@@ -1021,19 +1021,17 @@ function Nexuralib:CreateWindow(config)
     if draggable then
     local dragging = false
     local dragStart, startPos
-    local screenSize = GetScreenSize()
-    local containerSize = winSize
-
-    -- Fungsi untuk memastikan posisi tidak keluar layar
-    local function clampPosition(posX, posY)
-        local minX = 0
-        local minY = 0
-        local maxX = screenSize.X - containerSize.X
-        local maxY = screenSize.Y - containerSize.Y
-        
-        return math.clamp(posX, minX, maxX), math.clamp(posY, minY, maxY)
+    
+    -- Fungsi untuk mengubah posisi container ke format offset murni
+    local function normalizeContainerPosition()
+        local absX = Container.AbsolutePosition.X
+        local absY = Container.AbsolutePosition.Y
+        Container.Position = UDim2.new(0, absX, 0, absY)
     end
-
+    
+    -- Normalisasi posisi saat window dibuat
+    normalizeContainerPosition()
+    
     Header.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             dragging = true
@@ -1054,13 +1052,14 @@ function Nexuralib:CreateWindow(config)
             local newX = startPos.X.Offset + delta.X
             local newY = startPos.Y.Offset + delta.Y
             
-            -- Clamp posisi agar tidak keluar layar
-            local clampedX, clampedY = clampPosition(newX, newY)
+            -- Batasi agar tidak keluar layar
+            local screenSize = GetScreenSize()
+            local maxX = screenSize.X - Container.AbsoluteSize.X
+            local maxY = screenSize.Y - Container.AbsoluteSize.Y
+            newX = math.clamp(newX, 0, maxX)
+            newY = math.clamp(newY, 0, maxY)
             
-            Container.Position = UDim2.new(
-                0, clampedX,
-                0, clampedY
-            )
+            Container.Position = UDim2.new(0, newX, 0, newY)
         end
     end)
     end
