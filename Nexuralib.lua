@@ -2615,7 +2615,10 @@ function Nexuralib:CreateWindow(config)
             bodyList.Parent = body
 
             local bodyPad = Instance.new("UIPadding")
-            bodyPad.PaddingAll = UDim.new(0, padding)
+            bodyPad.PaddingLeft = UDim.new(0, padding)
+            bodyPad.PaddingRight = UDim.new(0, padding)
+            bodyPad.PaddingTop = UDim.new(0, padding)
+            bodyPad.PaddingBottom = UDim.new(0, padding)
             bodyPad.Parent = body
 
             -- Mini TabAPI for card body
