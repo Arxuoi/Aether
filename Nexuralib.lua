@@ -1016,32 +1016,52 @@ function Nexuralib:CreateWindow(config)
 
     -- ==================== DRAGGABLE ====================
     if draggable then
-        local dragging = false
-        local dragStart, startPos
+    local dragging = false
+    local dragStart, startPos
+    local screenSize = GetScreenSize()
+    local containerSize = winSize
 
-        Header.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                dragging = true
-                dragStart = input.Position
-                startPos = Container.Position
-            end
-        end)
-        Header.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                dragging = false
-            end
-        end)
-        UserInputService.InputChanged:Connect(function(input)
-            if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                local delta = input.Position - dragStart
-                Container.Position = UDim2.new(
-                    startPos.X.Scale, startPos.X.Offset + delta.X,
-                    startPos.Y.Scale, startPos.Y.Offset + delta.Y
-                )
-            end
-        end)
+    -- Fungsi untuk memastikan posisi tidak keluar layar
+    local function clampPosition(posX, posY)
+        local minX = 0
+        local minY = 0
+        local maxX = screenSize.X - containerSize.X
+        local maxY = screenSize.Y - containerSize.Y
+        
+        return math.clamp(posX, minX, maxX), math.clamp(posY, minY, maxY)
     end
 
+    Header.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = Container.Position
+        end
+    end)
+    
+    Header.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
+    
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local delta = input.Position - dragStart
+            local newX = startPos.X.Offset + delta.X
+            local newY = startPos.Y.Offset + delta.Y
+            
+            -- Clamp posisi agar tidak keluar layar
+            local clampedX, clampedY = clampPosition(newX, newY)
+            
+            Container.Position = UDim2.new(
+                0, clampedX,
+                0, clampedY
+            )
+        end
+    end)
+    end
+    
     -- ==================== TAB SYSTEM ====================
     local tabs = {}
     local activeTab = nil
