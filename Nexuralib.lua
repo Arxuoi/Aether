@@ -1011,7 +1011,10 @@ function Nexuralib:CreateWindow(config)
     ContentList.Padding = UDim.new(0, SPACING.SM)
     ContentList.Parent = ContentScroll
     local ContentPad = Instance.new("UIPadding")
-    ContentPad.PaddingAll = UDim.new(0, SPACING.LG)
+    ContentPad.PaddingLeft = UDim.new(0, SPACING.LG)
+    ContentPad.PaddingRight = UDim.new(0, SPACING.LG)
+    ContentPad.PaddingTop = UDim.new(0, SPACING.LG)
+    ContentPad.PaddingBottom = UDim.new(0, SPACING.LG)
     ContentPad.Parent = ContentScroll
 
     -- ==================== DRAGGABLE ====================
