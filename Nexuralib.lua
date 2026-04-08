@@ -44,7 +44,7 @@ local COLORS = {
     GlassBackground = Color3.fromRGB(255, 255, 255),
     SidebarBg       = Color3.fromRGB(245, 245, 247),
     SidebarActive   = Color3.fromRGB(0,   122, 255),
-    Transparent     = Color3.fromRGB(0,   0,   0),
+    Transparent     = Color3.fromRGB(0,   0,   0)
 }
 
 local FONTS = {
