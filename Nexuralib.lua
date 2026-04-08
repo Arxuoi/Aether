@@ -1019,49 +1019,23 @@ function Nexuralib:CreateWindow(config)
 
     -- ==================== DRAGGABLE ====================
     if draggable then
-    local dragging = false
-    local dragStart, startPos
+    local dragDetector = Instance.new("UIGragDetector")
+    dragDetector.Parent = Header
+    dragDetector.DragStyle = Enum.UIGragDetectorDragStyle.Standard
     
-    -- Fungsi untuk mengubah posisi container ke format offset murni
-    local function normalizeContainerPosition()
-        local absX = Container.AbsolutePosition.X
-        local absY = Container.AbsolutePosition.Y
-        Container.Position = UDim2.new(0, absX, 0, absY)
+    dragDetector.DragMoveCallback = function(obj, delta)
+        local newX = Container.Position.X.Offset + delta.X
+        local newY = Container.Position.Y.Offset + delta.Y
+        
+        -- Batasi agar tidak keluar layar
+        local screenSize = GetScreenSize()
+        local maxX = screenSize.X - Container.AbsoluteSize.X
+        local maxY = screenSize.Y - Container.AbsoluteSize.Y
+        newX = math.clamp(newX, 0, maxX)
+        newY = math.clamp(newY, 0, maxY)
+        
+        Container.Position = UDim2.new(0, newX, 0, newY)
     end
-    
-    -- Normalisasi posisi saat window dibuat
-    normalizeContainerPosition()
-    
-    Header.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            dragStart = input.Position
-            startPos = Container.Position
-        end
-    end)
-    
-    Header.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
-    end)
-    
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local delta = input.Position - dragStart
-            local newX = startPos.X.Offset + delta.X
-            local newY = startPos.Y.Offset + delta.Y
-            
-            -- Batasi agar tidak keluar layar
-            local screenSize = GetScreenSize()
-            local maxX = screenSize.X - Container.AbsoluteSize.X
-            local maxY = screenSize.Y - Container.AbsoluteSize.Y
-            newX = math.clamp(newX, 0, maxX)
-            newY = math.clamp(newY, 0, maxY)
-            
-            Container.Position = UDim2.new(0, newX, 0, newY)
-        end
-    end)
     end
     
     -- ==================== TAB SYSTEM ====================
