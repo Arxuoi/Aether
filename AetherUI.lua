@@ -5877,7 +5877,7 @@ end
     ╔══════════════════════════════════════════════════════════════════════════════╗
     ║                    AETHERUI COMPLETE USAGE EXAMPLE                            ║
     ╚══════════════════════════════════════════════════════════════════════════════╝
-    
+--]]
     -- Load library
     local AetherUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/USER/REPO/main/AetherUI.lua"))()
     
